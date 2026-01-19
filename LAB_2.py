@@ -9,30 +9,46 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 
 
 
-# 1
+#A1
+#Purchase Data
+df = pd.read_excel(file_name, sheet_name="Purchase data")
 
-def load_purchase_data(file_path):
-    df = pd.read_excel(file_path, sheet_name="Purchase data")
-    X = df[["Candies (#)", "Mangoes (Kg)", "Milk Packets (#)"]].values
-    y = df["Payment (Rs)"].values.reshape(-1, 1)
-    return X, y
+# column names
+cols = list(df.columns)
 
+# Feature matrix
+X = df[[cols[1], cols[2], cols[3]]].values
+y = df[cols[4]].values
 
-def calculate_rank(matrix):
-    return np.linalg.matrix_rank(matrix)
+# Conversion to numeric
+X = X.astype(float)
+y = y.astype(float)
 
+print("A1: Purchase Data")
+print("Number of features:", X.shape[1])
+print("Number of samples:", X.shape[0])
 
-def calculate_cost_pinv(X, y):
-    X_pinv = np.linalg.pinv(X)
-    return X_pinv @ y
-# 2
-def create_labels(y):
-    return np.where(y > 200, 1, 0)
+# Rank of the matrix
+rank = np.linalg.matrix_rank(X)
+print("Rank of feature matrix:", rank)
 
-def train_classifier(X, labels):
-    model = LogisticRegression()
-    model.fit(X, labels)
-    return model
+# Pseudo-inverse and cost calculation
+X_pinv = np.linalg.pinv(X)
+cost = X_pinv.dot(y)
+
+print("Cost of each product:", cost)
+
+#A2
+print("A2: Customer Classification")
+
+category = []
+
+for amount in y:
+    if amount > 200:
+        category.append("RICH")
+    else:
+        category.append("POOR")
+
 
 # 3
 
@@ -132,4 +148,5 @@ def main():
 
 # RUN
 if __name__ == "__main__":
+
     main()
