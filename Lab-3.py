@@ -82,9 +82,6 @@ def confusion_metrics(y_true, y_pred):
     f1 = 2 * precision * recall / (precision + recall)
     return cm, accuracy, precision, recall, f1
 
-
-# ================= MAIN =================
-
 np.random.seed(0)
 
 class0 = np.random.normal(2, 1, (50, 2))
@@ -141,3 +138,4 @@ for k in k_vals:
 
 plt.plot(k_vals, accs)
 plt.show()
+
