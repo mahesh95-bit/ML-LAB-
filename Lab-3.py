@@ -79,25 +79,6 @@ def knn_predict_custom(X_train, y_train, test_point, k):
     return max(set(labels), key=labels.count)
 
 
-#A13
-def confusion_metrics(y_true, y_pred):
-    cm = confusion_matrix(y_true, y_pred)
-    tn, fp, fn, tp = cm.ravel()
-    accuracy = (tp + tn) / (tp + tn + fp + fn)
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
-    f1 = 2 * precision * recall / (precision + recall)
-    return cm, accuracy, precision, recall, f1
-
-
-#A14
-def matrix_inversion_classifier(X_train, y_train, X_test):
-    Xb = np.c_[np.ones(X_train.shape[0]), X_train]
-    W = np.linalg.pinv(Xb.T @ Xb) @ Xb.T @ y_train
-    Xtb = np.c_[np.ones(X_test.shape[0]), X_test]
-    preds = Xtb @ W
-    return np.where(preds >= 0.5, 1, 0)
-
 np.random.seed(0)
 
 class0 = np.random.normal(2, 1, (50, 2))
@@ -137,35 +118,3 @@ custom_mink, scipy_mink = minkowski_compare(a, b, 3)
 #A6
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
-#A7
-knn = KNeighborsClassifier(n_neighbors=3)
-knn.fit(X_train, y_train)
-
-#A8
-accuracy_knn = knn.score(X_test, y_test)
-
-#A9
-pred_knn = knn.predict(X_test)
-single_vector_prediction = knn.predict([X_test[0]])
-
-#A10
-pred_custom = np.array([knn_predict_custom(X_train, y_train, x, 3) for x in X_test])
-
-#A11
-k_vals = range(1, 12)
-accs = []
-for k in k_vals:
-    preds = np.array([knn_predict_custom(X_train, y_train, x, k) for x in X_test])
-    accs.append(np.mean(preds == y_test))
-
-plt.plot(k_vals, accs)
-plt.show()
-
-#A12
-train_preds = knn.predict(X_train)
-cm_train, acc_train, prec_train, rec_train, f1_train = confusion_metrics(y_train, train_preds)
-cm_test, acc_test, prec_test, rec_test, f1_test = confusion_metrics(y_test, pred_knn)
-
-#A14
-inv_preds = matrix_inversion_classifier(X_train, y_train, X_test)
-cm_inv, acc_inv, prec_inv, rec_inv, f1_inv = confusion_metrics(y_test, inv_preds)
